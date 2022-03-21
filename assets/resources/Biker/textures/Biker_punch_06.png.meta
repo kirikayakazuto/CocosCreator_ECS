@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "131ddcee-0ed4-4aa2-8e4c-4a2f3bf4b3e5",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_punch_06": {
+      "ver": "1.0.6",
+      "uuid": "7501f2da-6a8b-4a10-9908-ec67aff429f4",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "131ddcee-0ed4-4aa2-8e4c-4a2f3bf4b3e5",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

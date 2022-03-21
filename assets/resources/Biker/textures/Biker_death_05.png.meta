@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "17ee8826-749d-43f4-a5b7-aabd55c7e665",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_death_05": {
+      "ver": "1.0.6",
+      "uuid": "555da2d0-cb33-416b-95fc-4e21b3979e7b",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "17ee8826-749d-43f4-a5b7-aabd55c7e665",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

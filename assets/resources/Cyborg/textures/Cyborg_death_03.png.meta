@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "8e697472-e2a7-46d4-b8f9-0ab8b26e6dcf",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Cyborg_death_03": {
+      "ver": "1.0.6",
+      "uuid": "b1e39871-bce0-4bc8-b60d-278279e43ff8",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "8e697472-e2a7-46d4-b8f9-0ab8b26e6dcf",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

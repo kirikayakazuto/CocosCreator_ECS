@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "b7594df1-6838-42e1-905f-252fbb32254b",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Cyborg_doublejump_02": {
+      "ver": "1.0.6",
+      "uuid": "0162e6a5-fc29-47fa-8f1a-a292f16bfc5d",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "b7594df1-6838-42e1-905f-252fbb32254b",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "35349264-63d2-441a-b839-2440c2f35178",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_doublejump_03": {
+      "ver": "1.0.6",
+      "uuid": "4a76bd06-e28f-41c1-93c1-35a15fb9bde3",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "35349264-63d2-441a-b839-2440c2f35178",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "31fe6446-8928-49e9-96d1-7b5b73506103",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Cyborg_idle_04": {
+      "ver": "1.0.6",
+      "uuid": "952b489a-9a6d-4c14-bfb6-9997e71e388c",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "31fe6446-8928-49e9-96d1-7b5b73506103",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

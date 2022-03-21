@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "658eda79-e8d3-42e1-952c-0a21517b9735",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Cyborg_punch_01": {
+      "ver": "1.0.6",
+      "uuid": "05345d19-5517-431a-8b14-be0a60d9fb8a",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "658eda79-e8d3-42e1-952c-0a21517b9735",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

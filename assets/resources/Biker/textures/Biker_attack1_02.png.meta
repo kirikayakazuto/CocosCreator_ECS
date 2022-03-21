@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "8c655051-ccbe-4b02-9618-ccfff782d182",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_attack1_02": {
+      "ver": "1.0.6",
+      "uuid": "e5b7949e-ab1a-485a-8652-81db128e6d2d",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "8c655051-ccbe-4b02-9618-ccfff782d182",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

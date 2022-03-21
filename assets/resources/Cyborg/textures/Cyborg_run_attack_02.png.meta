@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "960e7163-6458-46cd-8351-f5a1f5bdb80c",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Cyborg_run_attack_02": {
+      "ver": "1.0.6",
+      "uuid": "04515057-7187-43e4-a215-1cfd9ebc14a3",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "960e7163-6458-46cd-8351-f5a1f5bdb80c",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

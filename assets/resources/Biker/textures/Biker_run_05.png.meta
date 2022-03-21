@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "ec97df45-d3e1-4cb8-99b9-762f934647d8",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_run_05": {
+      "ver": "1.0.6",
+      "uuid": "a6252eac-25e4-4b98-8b85-05c4ba8e7641",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "ec97df45-d3e1-4cb8-99b9-762f934647d8",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

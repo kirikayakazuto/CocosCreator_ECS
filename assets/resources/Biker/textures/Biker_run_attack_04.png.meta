@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "92f4a463-fcfa-45b6-916e-df97b5c41d78",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 48,
+  "height": 48,
+  "platformSettings": {},
+  "subMetas": {
+    "Biker_run_attack_04": {
+      "ver": "1.0.6",
+      "uuid": "5a2a0b48-ed3b-4d7e-9896-6085d0a48464",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "92f4a463-fcfa-45b6-916e-df97b5c41d78",
+      "trimType": "none",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 48,
+      "height": 48,
+      "rawWidth": 48,
+      "rawHeight": 48,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
