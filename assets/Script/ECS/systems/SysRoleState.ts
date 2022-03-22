@@ -1,4 +1,5 @@
-import { EventDeath, EventHPChange, EventHurt, EventRun, EventStand } from "../../Struct/NodeEvent";
+import { EventDeath, EventGraphicsDraw, EventHPChange, EventHurt, EventRun, EventStand } from "../../Struct/NodeEvent";
+import { ComAttackable } from "../components/ComAttackable";
 import { ComBehaviorTree } from "../components/ComBehaviorTree";
 import { ComCocosNode } from "../components/ComCocosNode";
 import { ComMonitor } from "../components/ComMonitor";
@@ -33,6 +34,20 @@ export class SysRoleState extends ECSSystem {
             if(!comCocosNode.loaded) return ;
             let comRoleConfig = world.getComponent(entity, ComRoleConfig);
             let comMovable = world.getComponent(entity, ComMovable);
+            let comMonitor = world.getComponent(entity, ComMonitor);
+            let comAttackable = world.getComponent(entity, ComAttackable);
+
+            comCocosNode.events.push(new EventGraphicsDraw([]));
+
+            if(comMonitor && comMonitor.debugInfo) {
+                comCocosNode.events.push(new EventGraphicsDraw(comMonitor.debugInfo.points, comMonitor.debugInfo.color));
+            }
+
+            if(comAttackable && comAttackable.debugInfo) {
+                comCocosNode.events.push(new EventGraphicsDraw(comAttackable.debugInfo.points, comAttackable.debugInfo.color));
+            }
+
+
 
             if(comMovable && comMovable.speedDirty) {
                 comMovable.speedDirty = false;

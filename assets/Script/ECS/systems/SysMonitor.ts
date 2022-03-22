@@ -41,27 +41,31 @@ export class SysMonitor extends ECSSystem {
             let comTrans = world.getComponent(entity, ComTransform);
             let comRoleConfig = world.getComponent(entity, ComRoleConfig);
 
+            let a = cc.v2(comTrans.x, comTrans.y);
+            let centerPoint = a.add(comTrans.dir.mul(comMonitor.lookLen));
+            let b = centerPoint.add(cc.v2(comTrans.dir.y, -comTrans.dir.x).mul(comMonitor.lookWidth));
+            let c = centerPoint.add(cc.v2(-comTrans.dir.y, comTrans.dir.x).mul(comMonitor.lookWidth));
+            let d = centerPoint.add(comTrans.dir.mul(comMonitor.outLen));
+            comMonitor.debugInfo = {
+                points: [a, b, d, c],
+                color: cc.Color.BLUE,
+            };
+
             // 判断当前monitor是否
             filter.entities.forEach((value: boolean, otherEntity: number) => {
                 let comTransOther = world.getComponent(otherEntity, ComTransform);
                 let comRoleConfigOther = world.getComponent(otherEntity, ComRoleConfig);
                 if(entity == otherEntity || !comRoleConfigOther || comRoleConfigOther.team == comRoleConfig.team) return ;
 
-                let a = cc.v2(comTrans.x, comTrans.y);
-
-                let centerPoint = a.add(comTrans.dir.mul(comMonitor.lookLen));
-                let b = centerPoint.add(cc.v2(comTrans.dir.y, -comTrans.dir.x).mul(comMonitor.lookSize));
-                let c = centerPoint.add(cc.v2(-comTrans.dir.y, comTrans.dir.x).mul(comMonitor.lookSize));
-
                 let _check = (com: ComTransform) => {
-                    return (a.sub(cc.v2(com.x, com.y)).len() < comMonitor.aroundLen || isInTriangle(cc.v2(com.x, com.y), a, b, c))
+                    return (a.sub(cc.v2(com.x, com.y)).len() < comMonitor.aroundLen || isInTriangle(cc.v2(com.x, com.y), a, b, c) || isInTriangle(cc.v2(com.x, com.y), b, c, d))
                 }
-                for(let i=comMonitor.others.length-1; i>=0; i--) {
-                    const com = world.getComponent(comMonitor.others[i], ComTransform);
-                    if(!com || !_check(com)) {
-                        comMonitor.others.splice(i, 1);
-                    }
-                }
+                // for(let i=comMonitor.others.length-1; i>=0; i--) {
+                //     const com = world.getComponent(comMonitor.others[i], ComTransform);
+                //     if(!com || !_check(com)) {
+                //         comMonitor.others.splice(i, 1);
+                //     }
+                // }
 
                 if(comMonitor.others.indexOf(otherEntity) == -1 && _check(comTransOther)) {
                     comMonitor.others.push(otherEntity);

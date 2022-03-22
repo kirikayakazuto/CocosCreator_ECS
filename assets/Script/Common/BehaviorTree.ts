@@ -1,4 +1,5 @@
 import { ComAttackable } from "../ECS/components/ComAttackable";
+import { ComBeAttacked } from "../ECS/components/ComBeAttacked";
 import { ComCocosNode } from "../ECS/components/ComCocosNode";
 import { ComMonitor } from "../ECS/components/ComMonitor";
 import { ComMovable } from "../ECS/components/ComMovable";
@@ -43,7 +44,8 @@ export namespace BT {
     /** 节点类型 */
     export enum NodeType {
         // 组合节点
-        Sequence,                   // 顺序节点
+        LockedSequence,             // 锁状态顺序节点
+        Sequence,                   // 
         Selector,                   // 选择节点
         RandomSelector,             // 随机选择节点
         Parallel,                   // 并行节点
@@ -64,8 +66,12 @@ export namespace BT {
         Monitor,                     // 监视
         Attack,
 
-        EnoughAttr,                 // 死亡
-        GoDeath,                    // 检查是否
+        EnoughAttr,                 // 足够的属性
+        WillBeAttacked,             // 即将收到攻击
+        Avoid,                      // 闪避
+        RunAway,                    // 逃跑          
+        InAttacking    
+
     }
 
     export class NodeBase {
@@ -87,13 +93,23 @@ export namespace BT {
         }
     }
 
-    /** 依次执行子节点, 遇到执行失败的则退出并返回失败, 全部执行成功则返回成功  */
     export class SequenceNode extends CombineNode {
         public currIdx = 0;
         public ignoreFailure = false;
 
         constructor(children: NodeBase[], ignoreFailture = false) {
             super(NodeType.Sequence, children);
+            this.ignoreFailure = ignoreFailture;
+        }
+    }
+
+    /** 依次执行子节点, 遇到执行失败的则退出并返回失败, 全部执行成功则返回成功  */
+    export class LockedSequenceNode extends CombineNode {
+        public currIdx = 0;
+        public ignoreFailure = false;
+
+        constructor(children: NodeBase[], ignoreFailture = false) {
+            super(NodeType.LockedSequence, children);
             this.ignoreFailure = ignoreFailture;
         }
     }
@@ -226,7 +242,7 @@ export namespace BT {
     }
 
     export class AttackNode extends NodeBase {
-        constructor(waitSeconds: number) {
+        constructor() {
             super(NodeType.Attack);
         }
     }
@@ -243,12 +259,29 @@ export namespace BT {
         }
     }
 
-    export class GoDeathNode extends NodeBase {
-        public waitSeconds: number;
-        public countDown: number;
-        constructor(waitSeconds: number) {
-            super(NodeType.GoDeath);
-            this.waitSeconds = waitSeconds;
+    export class WillBeAttackedNode extends NodeBase {
+        constructor() {
+            super(NodeType.WillBeAttacked);
+        }
+    }
+
+    export class AvoidNode extends NodeBase {
+        public speed: number;
+        constructor(speed: number) {
+            super(NodeType.Avoid);
+            this.speed = speed;
+        }
+    }
+
+    export class RunAwayNode extends NodeBase {
+        constructor() {
+            super(NodeType.RunAway);
+        }
+    }
+
+    export class InAttackingNode extends NodeBase {
+        constructor() {
+            super(NodeType.InAttacking);
         }
     }
 
@@ -267,6 +300,43 @@ export namespace BT {
             node.state = NodeState.Executing;
         },
         onUpdate(node: SequenceNode, context: ExecuteContext) : void {
+            
+            if(node.currIdx < 0 || node.currIdx >= node.children.length) {
+                // 越界了, 不应该发生, 直接认为是失败了
+                node.state = NodeState.Fail;
+                return;
+            }
+
+            // 检查前置条件是否满足
+            for(let i=0; i<node.currIdx; i++) {
+                context.executor.updateBTNode(node.children[i], context);
+                if(node.children[i].state !== NodeState.Success) return;
+            }
+
+            context.executor.updateBTNode(node.children[node.currIdx], context);
+            let state = node.children[node.currIdx].state;
+            if(state == NodeState.Executing) return;
+
+            if(state === NodeState.Fail && !node.ignoreFailure) {
+                node.state = NodeState.Fail;
+                return;
+            }
+            if(state === NodeState.Success && node.currIdx == node.children.length-1) {
+                node.state = NodeState.Success;
+                return ;
+            }
+            context.executor.onEnterBTNode(node.children[++node.currIdx], context);
+        }
+    };
+
+    /** LockedSequence node */
+    NodeHandlers[NodeType.LockedSequence] = {
+        onEnter(node: LockedSequenceNode, context: ExecuteContext) : void {
+            node.currIdx = 0;
+            context.executor.onEnterBTNode(node.children[node.currIdx], context);
+            node.state = NodeState.Executing;
+        },
+        onUpdate(node: LockedSequenceNode, context: ExecuteContext) : void {
             if(node.state !== NodeState.Executing) return ;
             if(node.currIdx < 0 || node.currIdx >= node.children.length) {
                 // 越界了, 不应该发生, 直接认为是失败了
@@ -495,6 +565,7 @@ export namespace BT {
             comMovable.points.push(cc.v2(comTrans.x, comTrans.y), node.targetPos);
             comMovable.speed = node.speed;
             comMovable.speedDirty = true;
+            comMovable.keepDir = false;
             node.state = NodeState.Executing;
             comMovable.running = false;
         },
@@ -519,6 +590,7 @@ export namespace BT {
             comMovable.points.push(cc.v2(comTrans.x, comTrans.y), cc.v2(targetX, targetY));
             comMovable.speed = node.speed;
             comMovable.speedDirty = true;
+            comMovable.keepDir = false;
             node.state = NodeState.Executing;
             comMovable.running = false;
         },
@@ -539,12 +611,13 @@ export namespace BT {
             let comMonitor = context.world.getComponent(context.entity, ComMonitor);
             if(comMonitor.others.length <= 0) return ;
             let target = context.world.getComponent(comMonitor.others[0], ComTransform);
-            let xOffdet = Math.sign(comTrans.x - target.x) * 10;
+            let xOffdet = Math.sign(comTrans.x - target.x) * 80;
             comMovable.pointIdx = 0;
             comMovable.points.length = 0;
             comMovable.points.push(cc.v2(comTrans.x, comTrans.y), cc.v2(target.x + xOffdet, target.y));
             comMovable.speed = node.speed;
             comMovable.speedDirty = true;
+            comMovable.keepDir = false;
             node.state = NodeState.Executing;
             comMovable.running = false;
             
@@ -555,6 +628,9 @@ export namespace BT {
             let comMonitor = context.world.getComponent(context.entity, ComMonitor);
             let comMovable = context.world.getComponent(context.entity, ComMovable);
             if(comMovable.points.length == 0 || comMovable.pointIdx < 0 || comMovable.pointIdx >= comMovable.points.length) {
+                let target = context.world.getComponent(comMonitor.others[0], ComTransform);
+        
+                comTrans.dir.x = Math.abs(comTrans.dir.x) * -Math.sign(comTrans.x - target.x)
                 node.state = BT.NodeState.Success;
                 return ;
             }
@@ -563,7 +639,7 @@ export namespace BT {
                 return ;
             }
             let target = context.world.getComponent(comMonitor.others[0], ComTransform);
-            let xOffdet = Math.sign(comTrans.x - target.x) * 10;
+            let xOffdet = Math.sign(comTrans.x - target.x) * 80;
             comMovable.points[1].x = target.x + xOffdet;
             comMovable.points[1].y = target.y;
         }
@@ -592,13 +668,18 @@ export namespace BT {
 
             comCocosNode.events.push(new (EventAttack));
             let comAttackable = context.world.getComponent(context.entity, ComAttackable);
-            comAttackable.duration = 1.2;
             comAttackable.countDown = comAttackable.duration;
             comAttackable.dirty = true;
-            comAttackable.hurtArea = cc.v2(20, 10);
+            comAttackable.debugInfo = null;
+
+
+            comAttackable.willHurtFrame = 0.8;
+            comAttackable.willHurtFrameCompleted = false;
+
             comAttackable.hurtFrame = 0.5;
-            comAttackable.mustAttackFrame = 0.6;
-            comAttackable.attack = 10;
+            comAttackable.hurtFrameCompleted = false;
+
+            
         },
         onUpdate(node: AttackNode, context: ExecuteContext) : void {
             if(node.state !== NodeState.Executing) return ;
@@ -624,19 +705,70 @@ export namespace BT {
         }
     };
 
-    /** GoDeath node */
-    NodeHandlers[NodeType.GoDeath] = {
-        onEnter(node: GoDeathNode, context: ExecuteContext) : void {
-            node.countDown = node.waitSeconds;
+    /** WillBeAttacked node */
+    NodeHandlers[NodeType.WillBeAttacked] = {
+        onEnter(node: WillBeAttackedNode, context: ExecuteContext) : void {
+            let comBeAttacked = context.world.getComponent(context.entity, ComBeAttacked);
+            
+            if(!comBeAttacked) return ;            
             node.state = NodeState.Executing;
         },
-        onUpdate(node: GoDeathNode, context: ExecuteContext) : void {
-            if(node.countDown <= 0) {
-                node.state = NodeState.Success;
-            }
+        onUpdate(node: WillBeAttackedNode, context: ExecuteContext) : void {
+            let comBeAttacked = context.world.getComponent(context.entity, ComBeAttacked);
+            let comMonitor = context.world.getComponent(context.entity, ComMonitor);
+            let monitor = comMonitor.others && comMonitor.others.indexOf(comBeAttacked.attacker) !== -1;
+            if(!comBeAttacked) return ;
+            
+            node.state = (monitor && comBeAttacked.attacker !== -1 && Math.random() > 0.8) ? NodeState.Success : NodeState.Fail;
         }
     };
 
+    /** Avoid node */
+    NodeHandlers[NodeType.Avoid] = {
+        onEnter(node: AvoidNode, context: ExecuteContext) : void {
+            let comTrans = context.world.getComponent(context.entity, ComTransform);
+            let comMovable = context.world.getComponent(context.entity, ComMovable);
+            comMovable.pointIdx = 0;
+            comMovable.points.length = 0;
+
+            let selfPoint = cc.v2(comTrans.x, comTrans.y);
+            comMovable.points.push(selfPoint, selfPoint.sub(cc.v2(50 * Math.sign(comTrans.dir.x), 0)));
+            comMovable.speed = node.speed;
+            comMovable.speedDirty = true;
+            comMovable.running = false;
+            comMovable.keepDir = true;
+
+            
+            node.state = NodeState.Executing;
+        },
+        onUpdate(node: AvoidNode, context: ExecuteContext) : void {
+            if(node.state !== NodeState.Executing) return ;
+            let comMovable = context.world.getComponent(context.entity, ComMovable);
+            if(!comMovable) {
+                node.state = BT.NodeState.Fail;
+                return ;
+            }
+
+            if(comMovable.points.length == 0 || comMovable.pointIdx < 0 || comMovable.pointIdx >= comMovable.points.length) {
+                node.state = BT.NodeState.Success;
+            }            
+        }
+    };
+
+    /** NotInAttack node */
+    NodeHandlers[NodeType.InAttacking] = {
+        onEnter(node: InAttackingNode, context: ExecuteContext) : void {
+            let comAttackable = context.world.getComponent(context.entity, ComAttackable);
+            if(!comAttackable) return ;            
+            node.state = NodeState.Executing;
+        },
+        onUpdate(node: InAttackingNode, context: ExecuteContext) : void {
+            let comAttackable = context.world.getComponent(context.entity, ComAttackable);
+            if(!comAttackable) return ;            
+
+            node.state = (comAttackable.countDown > 0 && comAttackable.countDown < comAttackable.duration-0.2) ? NodeState.Success : NodeState.Fail;
+        }
+    };
 
 
 

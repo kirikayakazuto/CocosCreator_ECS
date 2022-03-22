@@ -4,7 +4,8 @@ export enum EventType {
     Attack,
     Hurt,
     HPChange,
-    Death
+    Death,
+    GraphicsDraw,
 }
 
 export class EventBase {
@@ -55,5 +56,15 @@ export class EventHPChange extends EventBase {
         this.maxHP = maxHP;
         this.lastHP = lastHP;
         this.nowHP = nowHP;
+    }
+}
+
+export class EventGraphicsDraw extends EventBase {
+    public points: cc.Vec2[];
+    public color: cc.Color;
+    constructor(points: cc.Vec2[], color?: cc.Color) {
+        super(EventType.GraphicsDraw)
+        this.points = points;
+        this.color = color;
     }
 }

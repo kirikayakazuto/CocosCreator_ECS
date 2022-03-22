@@ -30,24 +30,36 @@ export class ECSController<T extends ECSWorld> {
         let comBehavior = this.world.addComponent(entity, ComBehaviorTree);
         
         let view = cc.view.getVisibleSize();
-        let patrol = new BT.SequenceNode([
-            new BT.WaitNode(2),
-            new BT.WalkToRandomPosNode(100, cc.size(view.width - 200, view.height - 200)),
-        ]);
-
-        let follow = new BT.SequenceNode([
-            new BT.WalkToTargetNode(250),
-            new BT.AttackNode(1.2)
-        ]);
-
-        let mainBehavior = new BT.SelectorNode([
-            new BT.ParallelNode([
-                new BT.InverterNode(new BT.MonitorNode()),
-                patrol
-            ], true),
-            follow
-        ]);
-        let root = new BT.RepeaterNode(mainBehavior, 9999);
+        
+        
+        let root = new BT.RepeaterNode(
+            new BT.SelectorNode([
+                new BT.ParallelNode([
+                    new BT.InverterNode(new BT.SequenceNode([
+                        new BT.WillBeAttackedNode(),
+                        new BT.InverterNode(new BT.InAttackingNode())
+                    ])),
+                    new BT.SelectorNode([
+                        new BT.ParallelNode([
+                            new BT.InverterNode(new BT.MonitorNode()),
+                            new BT.LockedSequenceNode([
+                                new BT.WaitNode(1.5),
+                                new BT.WalkToRandomPosNode(100, cc.size(view.width - 200, view.height - 200)),
+                            ])
+                        ], true),
+                        new BT.LockedSequenceNode([
+                            new BT.WalkToTargetNode(250),
+                            new BT.AttackNode(),
+                            new BT.WaitNode(0.8)
+                        ])
+                    ])
+                ], true),
+                new BT.LockedSequenceNode([
+                    new BT.AvoidNode(500),
+                    new BT.WaitNode(1),
+                ])
+            ])    
+        , 9999);
         
         comBehavior.root = root;
 
@@ -56,9 +68,10 @@ export class ECSController<T extends ECSWorld> {
         comMovable.running = false;
 
         let comMonitor = this.world.addComponent(entity, ComMonitor);
-        comMonitor.lookLen = 350;
-        comMonitor.lookSize = 300;
-        comMonitor.aroundLen = 100;
+        comMonitor.lookLen = 200;
+        comMonitor.lookWidth = 160;
+        comMonitor.outLen = 100;
+        comMonitor.aroundLen = 0;
 
         let comRoleConfig = this.world.addComponent(entity, ComRoleConfig);
         comRoleConfig.maxHP = 100;
@@ -69,9 +82,13 @@ export class ECSController<T extends ECSWorld> {
 
         let comAttackable = this.world.addComponent(entity, ComAttackable);
         comAttackable.dirty = false;
+        comAttackable.duration = 1.2;
         comAttackable.countDown = 0;
+        comAttackable.hurtArea = cc.v2(90, 30);
+        comAttackable.attack = 10;
 
-        let comBeAttack = this.world.addComponent(entity, ComBeAttacked);
+        let comBeAttacked = this.world.addComponent(entity, ComBeAttacked);
+        comBeAttacked.attacker = -1;
         
 
         return entity;

@@ -8,5 +8,7 @@ export class ComMovable {
     public points: cc.Vec2[] = [];
     public pointIdx = 0;
 
+    public keepDir = false;
+
     public speedDirty = false;
 }

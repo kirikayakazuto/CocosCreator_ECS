@@ -51,10 +51,12 @@ export class SysMovable extends ECSSystem {
                     comMovable.pointIdx ++;
                     continue;
                 }
-                comTrans.dir.x = offsetX / offsetLen;
-                comTrans.dir.y = offsetY / offsetLen;
-                comTrans.x += moveLen * comTrans.dir.x;
-                comTrans.y += moveLen * comTrans.dir.y;
+                if(!comMovable.keepDir) {
+                    comTrans.dir.x = offsetX / offsetLen || comTrans.dir.x;
+                    comTrans.dir.y = offsetY / offsetLen;
+                }
+                comTrans.x += moveLen * offsetX / offsetLen;
+                comTrans.y += moveLen * offsetY / offsetLen;
                 
                 moveLen = -1;
             }
