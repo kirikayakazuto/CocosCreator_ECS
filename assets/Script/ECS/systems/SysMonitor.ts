@@ -21,8 +21,8 @@ export class SysMonitor extends ECSSystem {
     /**  */
     public onEntityLeave(world: ECSWorld, entity: number): void {
         let filter = world.getFilter(FILTER_MONITOR);
-         // 判断当前monitor是否
-         filter.entities.forEach((value: boolean, otherEntity: number) => {
+        // 判断当前monitor是否
+        filter.entities.forEach((value: boolean, otherEntity: number) => {
             let comMonitor = world.getComponent(otherEntity, ComMonitor);
             if(!comMonitor) return ;
             for(let i=comMonitor.others.length-1; i>=0; i--) {
@@ -60,12 +60,6 @@ export class SysMonitor extends ECSSystem {
                 let _check = (com: ComTransform) => {
                     return (a.sub(cc.v2(com.x, com.y)).len() < comMonitor.aroundLen || isInTriangle(cc.v2(com.x, com.y), a, b, c) || isInTriangle(cc.v2(com.x, com.y), b, c, d))
                 }
-                // for(let i=comMonitor.others.length-1; i>=0; i--) {
-                //     const com = world.getComponent(comMonitor.others[i], ComTransform);
-                //     if(!com || !_check(com)) {
-                //         comMonitor.others.splice(i, 1);
-                //     }
-                // }
 
                 if(comMonitor.others.indexOf(otherEntity) == -1 && _check(comTransOther)) {
                     comMonitor.others.push(otherEntity);

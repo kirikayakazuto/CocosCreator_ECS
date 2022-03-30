@@ -23,7 +23,13 @@ export class SysAttack extends ECSSystem {
     }
     /**  */
     public onEntityLeave(world: ECSWorld, entity: number): void {
-
+        let filter = world.getFilter(FILTER_ATTACKABLE);
+        // 判断当前monitor是否
+        filter.entities.forEach((value: boolean, otherEntity: number) => {
+            let comBeAttacked = world.getComponent(otherEntity, ComBeAttacked);
+            if(!comBeAttacked) return ;
+            if(comBeAttacked.attacker == entity) comBeAttacked.attacker = -1;
+        });
     }
     /** 更新 */
     public onUpdate(world: ECSWorld, dt: number): void {

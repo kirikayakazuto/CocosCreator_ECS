@@ -59,7 +59,12 @@ export default class RoleEventProcess extends EventProcess {
             break;
 
             case EventType.GraphicsDraw:
-                this._graphicsDraw(event as EventGraphicsDraw);
+                if(cc.debug.isDisplayStats()) {
+                    this._graphicsDraw(event as EventGraphicsDraw);
+                }else {
+                    this._graphicsDraw(null);
+                }
+                 
             break;
 
 
@@ -76,7 +81,7 @@ export default class RoleEventProcess extends EventProcess {
     }
 
     private _graphicsDraw(event: EventGraphicsDraw) {
-        if(event.points.length <= 0) {
+        if(!event || event.points.length <= 0) {
             this.graphics.clear();
             return ;
         }

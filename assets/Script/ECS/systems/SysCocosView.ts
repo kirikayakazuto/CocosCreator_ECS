@@ -19,7 +19,16 @@ const FILTER_NODE_EVENT = GenFillterKey([ComCocosNode, ComTransform]);
 export class SysCocosView extends ECSSystem implements ITouchProcessor {
 
     onTouchStart(worldPos: cc.Vec2, world: ECSWorld): boolean {
+        
         return false;
+    }
+
+    onTouchMove(worldPos: cc.Vec2, world: ECSWorld): void {
+        
+    }
+
+    onTouchCancel(worldPos: cc.Vec2, world: ECSWorld): void {
+        
     }
 
     onAdd(world: ECSWorld) {

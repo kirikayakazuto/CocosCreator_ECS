@@ -28,6 +28,8 @@ export default class Main extends cc.Component {
 
         this.regiestTouchEvent();
 
+        //this.regiestTouchHandler();
+
     }
 
     onClick1() {
@@ -36,6 +38,10 @@ export default class Main extends cc.Component {
 
     onClick2() {
         this.ecsController.createRoleEntity("Cyborg");
+    }
+
+    onClick3() {
+        cc.debug.setDisplayStats(!cc.debug.isDisplayStats());
     }
 
     protected update(dt: number): void {
@@ -54,14 +60,20 @@ export default class Main extends cc.Component {
             this._touchHandler[i].onTouchStart(e.getLocation(), this._world);   
         }
     }
-    private _onTouchMove() {
-
+    private _onTouchMove(e: cc.Event.EventTouch) {
+        for(let i = 0; i < this._touchHandler.length; i++) {
+            this._touchHandler[i].onTouchMove(e.getLocation(), this._world);   
+        }
     }
-    private _onTouchEnd() {
-
+    private _onTouchEnd(e: cc.Event.EventTouch) {
+        for(let i = 0; i < this._touchHandler.length; i++) {
+            this._touchHandler[i].onTouchEnd(e.getLocation(), this._world);   
+        }
     }
-    private _onTouchCancel() {
-
+    private _onTouchCancel(e: cc.Event.EventTouch) {
+        for(let i = 0; i < this._touchHandler.length; i++) {
+            this._touchHandler[i].onTouchCancel(e.getLocation(), this._world);   
+        }
     }
 
     public regiestTouchHandler(handler: ITouchProcessor) {
