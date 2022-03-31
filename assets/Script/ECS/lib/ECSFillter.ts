@@ -1,5 +1,4 @@
 import { ComType, EntityIndex } from "./Const";
-import { Entity } from "./ECSEntity";
 import { ECSWorld } from "./ECSWorld";
 
 export class ECSFillter {
@@ -43,14 +42,14 @@ export class ECSFillter {
         });
     }
 
-    public isAccept(entity: Entity) {
+    public isAccept(entityIndex: EntityIndex) {
         for(let i = 0; i < this._acceptComTypes.length; i++) {
-            if(entity.getComponent(this._acceptComTypes[i]) == -1) {
+            if(this._world.getComponentPoolIdx(entityIndex, this._acceptComTypes[i]) == -1) {
                 return false;
             }
         }
         for(let i = 0; i < this._rejectComTypes.length; i++) {
-            if(entity.getComponent(this._rejectComTypes[i]) !== -1) {
+            if(this._world.getComponentPoolIdx(entityIndex, this._rejectComTypes[i]) != -1) {
                 return false;
             }
         }

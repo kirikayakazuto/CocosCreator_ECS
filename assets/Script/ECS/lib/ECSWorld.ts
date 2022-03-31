@@ -1,4 +1,3 @@
-import { Entity } from "./ECSEntity"
 import { ECSFillter } from "./ECSFillter"
 import { ECSComConstructor, GetComConstructor as GetComConstructor, GetComConstructorType } from "./ECSComponent";
 import { ECSSystem } from "./ECSSystem";
@@ -10,14 +9,11 @@ import { ECSComponentPool } from "./ECSComponentPool";
  */
 export class ECSWorld {
     private _systems: ECSSystem[] = [];                 // world内所有的system
-    private _entities: Entity[] = [];                   // world内所有的entity
     private _reservedIds: number[] = [];                // 缓存
-
+    private _entityToComponents: number[][] = [];
     private _componentPools: ECSComponentPool<any>[] = [];
     private _fillters = new Map<string, ECSFillter>();
-
-    private _entitiesToDelete: number[] = [];
-    private _entityIdSeed: number = 0;
+    private _entitiesToDelete: Set<EntityIndex> = new Set();
 
     /** 获取ComponentPool */
     public getComponentPool<T>(typeOrFunc: ComType | {prototype: T}): ECSComponentPool<T> {
@@ -32,20 +28,16 @@ export class ECSWorld {
     public addSystem(system: ECSSystem) {
         this._systems.push(system);
         system.onAdd(this);
-        for(let i = 0; i < this._entities.length; i++) {
-            if(this._entities[i].id !== -1) {
-                system.onEntityEnter(this, i);
-            }
+        for(let i = 0; i < this._entityToComponents.length; i++) {
+            system.onEntityEnter(this, i);
         }
     }
 
     /** 移除system */
     public removeSystem(system: ECSSystem) {
         system.onRemove(this);
-        for(let i = 0; i < this._entities.length; i++) {
-            if(this._entities[i].id !== -1) {
-                system.onEntityLeave(this, i);
-            }
+        for(let i = 0; i < this._entityToComponents.length; i++) {
+            system.onEntityLeave(this, i);
         }
         for(let i = this._systems.length - 1; i >= 0; i--) {
             if(this._systems[i] == system) {
@@ -56,81 +48,104 @@ export class ECSWorld {
 
     /** 创建实体 */
     public createEntity(): number {
-        let entity: Entity = null;
         let index = -1;
         if(this._reservedIds.length > 0) {
             index = this._reservedIds.pop();
-            entity = this._entities[index];
+            this._entityToComponents[index].fill(-1);
         }else {
-            entity = new Entity();
-            index = this._entities.length;
-            this._entities.push(entity);
+            index = this._entityToComponents.length;
+            this._entityToComponents[index] = new Array<ComPoolIndex>(Object.keys(ComType).length/2).fill(-1);
         }
-        entity.id = this._entityIdSeed++;
-        entity.world = this;
-        entity.index = index;
-        entity.dead = false;
         for(let system of this._systems) {
-            system.onEntityEnter(this, entity.index);
+            system.onEntityEnter(this, index);
         }
-        return entity.index;
+        return index;
     }
 
     /** 移除实体 */
-    public removeEntity(entity: EntityIndex): boolean {
-        if(entity <= 0) return false;
-        if(!this._entities[entity] || this._entities[entity].dead) {
+    public removeEntity(entityIndex: EntityIndex): boolean {
+        if(entityIndex <= 0) return false;
+        if(!this._entityToComponents[entityIndex]) {
             console.warn(`[ECSWorld] removeEntity entity is removed`);
             return false;
         }
-        this._entities[entity].dead = true;
-        this._entitiesToDelete.push(entity);
 
         this._fillters.forEach((fillter, key) => {
-            fillter.isContains(entity) && fillter.onEntityLeave(entity);
+            fillter.isContains(entityIndex) && fillter.onEntityLeave(entityIndex);
         });
         for(let system of this._systems) {
-            system.onEntityLeave(this, entity);
+            system.onEntityLeave(this, entityIndex);
         }
+
+        this._entitiesToDelete.add(entityIndex);
         return true;
     }
 
-    public getComponent<T>(entity: EntityIndex, com: {prototype: T}) {
-        if(!this._entities[entity]) return null;
-        let comPoolIdx = this._entities[entity].getComponent(com);
+    public getComponentPoolIdx<T>(entityIndex: EntityIndex, com: {prototype: T} | ComType) {
+        let entity = this._entityToComponents[entityIndex];
+        if(!entity) return -1;
+        let type = typeof com == 'number' ? com : GetComConstructorType(com);
+        return entity[type];
+    }
+
+    public getComponent<T>(entityIndex: EntityIndex, com: {prototype: T} | ComType) {
+        let comPoolIdx = this.getComponentPoolIdx(entityIndex, com);
+        if(comPoolIdx == -1) return null;
         return this.getComponentPool<T>(com).get(comPoolIdx);
     }
 
-    public removeComponent(entity: EntityIndex, com: ECSComConstructor) {
-        if(!this._entities[entity]) return ;
-        this._entities[entity].removeComponent(com);
-    }
-
-    public addComponent<T>(entity: EntityIndex, com: {prototype: T}) {
-        if(!this._entities[entity]) return null;
-        let comPoolIdx = this._entities[entity].addComponent(com);
+    public addComponent<T>(entityIndex: EntityIndex, com: {prototype: T}, dirty = true) {
+        let entity = this._entityToComponents[entityIndex];
+        if(!entity) return null;
+        let type = GetComConstructorType(com);
+        let comPoolIdx = entity[type];
+        if(comPoolIdx == -1) {
+            comPoolIdx = this.getComponentPool<T>(com).alloc();    
+        }
+        entity[type] = comPoolIdx;
+        dirty && this.setEntityDirty(entityIndex);
         return this.getComponentPool<T>(com).get(comPoolIdx)
     }
 
-    public getSingletonComponent<T>(com: {prototype: T}): T {
-        let entity = this._entities[0];
-        let comPoolIdx = entity.getComponent(<ECSComConstructor>com);
-        let pool = this.getComponentPool<T>(com);
-        if(comPoolIdx >= 0) return pool.get(comPoolIdx);
-        return pool.get(entity.addComponent(com));
+    public removeComponent(entityIndex: EntityIndex, com: ECSComConstructor, dirty = true) {
+        let entity = this._entityToComponents[entityIndex];
+        if(!entity) return true;
+        let type = GetComConstructorType(com);
+        let comPoolIdx = entity[type];
+        if(comPoolIdx == -1) return true;
+        entity[type] = -1;
+        this.getComponentPool(com).free(comPoolIdx);
+        dirty && this.setEntityDirty(entityIndex);
+        return true;
     }
 
-    public setEntityDirty(entity: Entity): void {
+    public removeAllComponents(entityIndex: EntityIndex, dirty = true) {
+        let entity = this._entityToComponents[entityIndex];
+        if(!entity) return null;
+        for(let i=0; i<entity.length; i++) {
+            if(entity[i] == -1) continue;
+            this.getComponentPool(i).free(entity[i]);
+        }
+        entity.fill(-1);
+        dirty && this.setEntityDirty(entityIndex);
+    }
+
+
+    public getSingletonComponent<T>(com: {prototype: T}): T {
+        let component = this.getComponent(0, com);
+        if(!component) {
+            component = this.addComponent(0, com);
+        }
+        return component;
+    }
+
+    public setEntityDirty(entityIndex: EntityIndex): void {
         this._fillters.forEach((fillter, key) => {
-            let accept = !entity.dead && fillter.isAccept(entity);
-            if(accept != fillter.isContains(entity.index)) {
-                accept ? fillter.onEntityEnter(entity.index) : fillter.onEntityLeave(entity.index);
+            let accept = !this._entitiesToDelete.has(entityIndex) && fillter.isAccept(entityIndex);
+            if(accept != fillter.isContains(entityIndex)) {
+                accept ? fillter.onEntityEnter(entityIndex) : fillter.onEntityLeave(entityIndex);
             }
         });
-    }
-
-    public getEntityId(entity: EntityIndex) : number {
-        return this._entities[entity].id;
     }
 
     public getFilter(fillterKey: string): ECSFillter {
@@ -143,10 +158,9 @@ export class ECSWorld {
         let fillter = new ECSFillter(this, accept, reject);
         this._fillters.set(fillterKey, fillter);
         // 将当期的entity放入fillter
-        for(let i=1; i<this._entities.length; i++) {
-            const entity = this._entities[i];
-            if(fillter.isAccept(entity)) {
-                fillter.onEntityEnter(entity.index);
+        for(let i=1; i<this._entityToComponents.length; i++) {
+            if(fillter.isAccept(i)) {
+                fillter.onEntityEnter(i);
             }
         }
         return fillter;
@@ -156,18 +170,17 @@ export class ECSWorld {
         for(let system of this._systems) {
             system.onUpdate(this, dt);
         }
-        if(this._entitiesToDelete.length > 0) {
+        if(this._entitiesToDelete.size > 0) {
             this._realRemoveEntity();
         }
     }
 
     private _realRemoveEntity() {
-        for(let entityIdx of this._entitiesToDelete) {
-            this._entities[entityIdx].removeAllComponents(false);
-            this._entities[entityIdx].id = -1;
-            this._reservedIds.push(entityIdx);
-        }
-        this._entitiesToDelete.length = 0;
+        this._entitiesToDelete.forEach((value) => {
+            this.removeAllComponents(value);
+            this._reservedIds.push(value);
+        });
+        this._entitiesToDelete.clear();
     }
 
 }
