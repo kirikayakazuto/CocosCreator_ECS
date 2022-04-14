@@ -1,7 +1,7 @@
 import { ComType, EntityIndex } from "./Const";
 import { ECSWorld } from "./ECSWorld";
 
-export class ECSFillter {
+export class ECSFilter {
     private _world: ECSWorld = null;
 
     private _entitiesMap = new Map<EntityIndex, boolean>();
@@ -21,7 +21,7 @@ export class ECSFillter {
 
     public onEntityEnter(entity: EntityIndex) {
         if(this._entitiesMap.has(entity)) {
-            console.warn(`[ECSFillter]: addEntity entity is had ${entity}`);
+            console.warn(`[ECSFilter]: addEntity entity is had ${entity}`);
             return true;
         }
         this._entitiesMap.set(entity, true);
@@ -30,7 +30,7 @@ export class ECSFillter {
 
     public onEntityLeave(entity: EntityIndex) {
         if(!this._entitiesMap.has(entity)) {
-            console.warn(`[ECSFillter]: removeEntity entity not had ${entity}`);
+            console.warn(`[ECSFilter]: removeEntity entity not had ${entity}`);
             return true;
         }
         this._entitiesMap.delete(entity);

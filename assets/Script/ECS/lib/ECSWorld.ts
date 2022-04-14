@@ -1,4 +1,4 @@
-import { ECSFillter } from "./ECSFillter"
+import { ECSFilter } from "./ECSFilter"
 import { ECSComConstructor, GetComConstructor as GetComConstructor, GetComConstructorType } from "./ECSComponent";
 import { ECSSystem } from "./ECSSystem";
 import { ComPoolIndex, ComType, EntityIndex } from "./Const";
@@ -12,7 +12,7 @@ export class ECSWorld {
     private _reservedIds: number[] = [];                // 缓存
     private _entityToComponents: number[][] = [];
     private _componentPools: ECSComponentPool<any>[] = [];
-    private _fillters = new Map<string, ECSFillter>();
+    private _fillters = new Map<string, ECSFilter>();
     private _entitiesToDelete: Set<EntityIndex> = new Set();
 
     /** 获取ComponentPool */
@@ -148,14 +148,15 @@ export class ECSWorld {
         });
     }
 
-    public getFilter(fillterKey: string): ECSFillter {
+
+    public getFilter(fillterKey: string): ECSFilter {
         if(this._fillters.has(fillterKey)) {
             return this._fillters.get(fillterKey);
         }
         let [acceptStr, rejectStr] = fillterKey.split("-");
         let accept = acceptStr && acceptStr.length > 0 ? acceptStr.split(',').map(Number) : null;
         let reject = rejectStr && rejectStr.length > 0 ? rejectStr.split(',').map(Number) : null;
-        let fillter = new ECSFillter(this, accept, reject);
+        let fillter = new ECSFilter(this, accept, reject);
         this._fillters.set(fillterKey, fillter);
         // 将当期的entity放入fillter
         for(let i=1; i<this._entityToComponents.length; i++) {
