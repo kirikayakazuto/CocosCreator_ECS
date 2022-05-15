@@ -488,7 +488,7 @@
     "node": {
       "__id__": 1
     },
-    "_enabled": true,
+    "_enabled": false,
     "_materials": [
       {
         "__uuid__": "a153945d-2511-4c14-be7b-05d242f47d57"

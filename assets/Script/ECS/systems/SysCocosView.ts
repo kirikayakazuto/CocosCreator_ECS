@@ -54,8 +54,7 @@ export class SysCocosView extends ECSSystem implements ITouchProcessor {
 
             let comRoleConfig = world.getComponent(entity, ComRoleConfig);
             this._loadView(world, entity, comNodeConfig).then((node: cc.Node) => {
-                console.log('load view success');
-                
+                console.log('load view success',comNodeConfig.prefabUrl);
             });
             return false;
         });
@@ -75,6 +74,15 @@ export class SysCocosView extends ECSSystem implements ITouchProcessor {
             
             return true;
         });
+        let layer = cc.find('Canvas/Layers/0');
+        let count1 = 0, count2 = 0;
+        for(const node of layer.children) {
+            node.zIndex =  node.y * -1;
+            if(node.name == 'Biker') count1++;
+            if(node.name == 'Cyborg') count2++;
+        }
+        cc.find('Canvas/a_role_count').getComponent(cc.Label).string = '' + count1;
+        cc.find('Canvas/b_role_count').getComponent(cc.Label).string = '' + count2;
     }
 
 

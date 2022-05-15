@@ -16,6 +16,11 @@ export default class Main extends cc.Component {
     private _touchHandler: ITouchProcessor[] = [];
 
     private ecsController = new ECSController();
+
+    protected onLoad(): void {
+        cc.dynamicAtlasManager.enabled = true;
+    }
+
     start () {
         this.ecsController.world = this._world = new WorldCocosView();
         this._world.createEntity();         // 创建0号实体
@@ -30,14 +35,20 @@ export default class Main extends cc.Component {
 
         //this.regiestTouchHandler();
 
+        
+
     }
 
     onClick1() {
-        this.ecsController.createRoleEntity("Biker");
+        for(let i=0; i<10; i++) {
+            this.ecsController.createRoleEntity("Biker");
+        }
     }
 
     onClick2() {
-        this.ecsController.createRoleEntity("Cyborg");
+        for(let i=0; i<10; i++) {
+            this.ecsController.createRoleEntity("Cyborg");
+        }
     }
 
     onClick3() {

@@ -627,6 +627,10 @@ export namespace BT {
             let comTrans = context.world.getComponent(context.entity, ComTransform);
             let comMonitor = context.world.getComponent(context.entity, ComMonitor);
             let comMovable = context.world.getComponent(context.entity, ComMovable);
+            if(comMonitor.others.length <=0){
+                node.state = BT.NodeState.Fail;
+                return ;
+            }
             if(comMovable.points.length == 0 || comMovable.pointIdx < 0 || comMovable.pointIdx >= comMovable.points.length) {
                 let target = context.world.getComponent(comMonitor.others[0], ComTransform);
         

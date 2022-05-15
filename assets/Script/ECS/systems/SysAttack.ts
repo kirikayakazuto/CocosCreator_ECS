@@ -6,7 +6,7 @@ import { ComTransform } from "../components/ComTransform";
 import { ECSSystem } from "../lib/ECSSystem";
 import { ECSWorld, GenFillterKey } from "../lib/ECSWorld";
 
-const FILTER_ATTACKABLE = GenFillterKey([ComAttackable]);
+const FILTER_ATTACKABLE = GenFillterKey([ComTransform, ComAttackable, ComRoleConfig]);
 const FILTER_BEATTACKED = GenFillterKey([ComBeAttacked]);
 export class SysAttack extends ECSSystem {
     /** 连接 */
