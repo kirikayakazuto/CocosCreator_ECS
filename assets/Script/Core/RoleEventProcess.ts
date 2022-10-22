@@ -59,11 +59,12 @@ export default class RoleEventProcess extends EventProcess {
             break;
 
             case EventType.GraphicsDraw:
-                // if(cc.debug.isDisplayStats()) {
-                //     this._graphicsDraw(event as EventGraphicsDraw);
-                // }else {
-                //     this._graphicsDraw(null);
-                // }
+                if(cc.debug.isDisplayStats()) {
+                    console.log('=====')
+                    this._graphicsDraw(event as EventGraphicsDraw);
+                }else {
+                    this._graphicsDraw(null);
+                }
                  
             break;
 

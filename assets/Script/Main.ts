@@ -40,13 +40,13 @@ export default class Main extends cc.Component {
     }
 
     onClick1() {
-        for(let i=0; i<10; i++) {
+        for(let i=0; i<1; i++) {
             this.ecsController.createRoleEntity("Biker");
         }
     }
 
     onClick2() {
-        for(let i=0; i<10; i++) {
+        for(let i=0; i<1; i++) {
             this.ecsController.createRoleEntity("Cyborg");
         }
     }
