@@ -586,7 +586,7 @@ export namespace BT {
             comMovable.pointIdx = 0;
             comMovable.points.length = 0;
             let targetX = node.size.width * Math.random() - node.size.width/2;
-            let targetY = node.size.height * Math.random() - node.size.height/2;
+            let targetY = node.size.height * Math.random() - node.size.height/2 - 150;
             comMovable.points.push(cc.v2(comTrans.x, comTrans.y), cc.v2(targetX, targetY));
             comMovable.speed = node.speed;
             comMovable.speedDirty = true;

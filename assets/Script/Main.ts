@@ -100,5 +100,19 @@ export default class Main extends cc.Component {
     }
 
 
+    private a() {
+        let map = {0: 0, 1: 0, 2: 0};       // 出现1的次数
+        for(let c=0; c<10000; c++) {
+            let a = [1, 2, 3];
+            a = a.sort((a, b) => Math.random() - 0.5);
+            for(let i=0; i<a.length; i++) {
+                if(a[i] == 1) {
+                    map[i] ++;
+                }
+            }
+        }
+        
+    }
+
     
 }

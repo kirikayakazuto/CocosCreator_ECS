@@ -98,8 +98,8 @@ export default class RoleEventProcess extends EventProcess {
         }
         this.graphics.lineTo(event.points[0].x, event.points[0].y);
         this.graphics.stroke();
-        
-        
+
+        event.points.length = 0;
     }
 
     public sync(x: number, y: number, dir: cc.Vec2) {

@@ -47,8 +47,6 @@ export class SysRoleState extends ECSSystem {
                 comCocosNode.events.push(new EventGraphicsDraw(comAttackable.debugInfo.points, comAttackable.debugInfo.color));
             }
 
-
-
             if(comMovable && comMovable.speedDirty) {
                 comMovable.speedDirty = false;
                 if(comMovable.speed > 0) {

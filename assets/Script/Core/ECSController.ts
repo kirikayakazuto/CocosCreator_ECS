@@ -44,7 +44,7 @@ export class ECSController<T extends ECSWorld> {
                             new BT.InverterNode(new BT.MonitorNode()),
                             new BT.LockedSequenceNode([
                                 new BT.WaitNode(1.5),
-                                new BT.WalkToRandomPosNode(100, cc.size(view.width - 200, view.height - 200)),
+                                new BT.WalkToRandomPosNode(100, cc.size(view.width - 100, view.height - 300)),
                             ])
                         ], true),
                         new BT.LockedSequenceNode([

@@ -1,4 +1,4 @@
-# 在Cocos中使用ECS + BehaviorTree 实现格斗AI
+# 在Cocos中使用ECS + BehaviorTree 实现格斗AI  使用过程中有任何问题,可以加QQ群: 552424835
 ### 成品展示
 
 demo 角色AI包含了巡逻, 追踪, 攻击, 躲避攻击, 受伤打断攻击, 攻击打断闪避等. 可以细心看一下二图.

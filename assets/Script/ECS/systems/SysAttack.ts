@@ -35,10 +35,13 @@ export class SysAttack extends ECSSystem {
     public onUpdate(world: ECSWorld, dt: number): void {
         let filter = world.getFilter(FILTER_ATTACKABLE);
         filter.walk((entity: number) => {
+            
             let comTransSelf = world.getComponent(entity, ComTransform);
             let comAttackable = world.getComponent(entity, ComAttackable);
             let comRoleConfigSelf = world.getComponent(entity, ComRoleConfig);
             if(!comAttackable.dirty) return ;
+
+            comAttackable.debugInfo = null;
 
             comAttackable.countDown -= dt;
             if(comAttackable.countDown <= 0) {
@@ -67,10 +70,7 @@ export class SysAttack extends ECSSystem {
                 return true
             }
 
-            comAttackable.debugInfo = {
-                points: [cc.v2(minX, minY), cc.v2(maxX, minY), cc.v2(maxX, maxY), cc.v2(minX, maxY)],
-                color: cc.Color.RED,
-            };
+            
 
             // 即将攻击未完成, 并且处于即将攻击时间段
             if(!comAttackable.willHurtFrameCompleted && comAttackable.countDown <= comAttackable.willHurtFrame) {
@@ -84,6 +84,11 @@ export class SysAttack extends ECSSystem {
                     return false;
                 })
             }
+            
+            comAttackable.debugInfo = {
+                points: [cc.v2(minX, minY), cc.v2(maxX, minY), cc.v2(maxX, maxY), cc.v2(minX, maxY)],
+                color: cc.Color.RED,
+            };
 
             if(!comAttackable.hurtFrameCompleted && comAttackable.countDown <= comAttackable.hurtFrame) {
                 comAttackable.hurtFrameCompleted = true;
